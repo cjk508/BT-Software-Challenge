@@ -182,7 +182,7 @@ class Tree(object):
 			# remove employee IDs in the second Path that are after the common root
 			rootIndex = secondPath.index(employeeID)
 			if rootIndex > 0 :
-				secondPath = secondPath[:]
+				secondPath = secondPath[:rootIndex]
 				rightString = ""
 				for employeeID in reversed(secondPath):
 					# generate the second path string
