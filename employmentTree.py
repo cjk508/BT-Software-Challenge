@@ -110,6 +110,9 @@ class Tree(object):
 				# update the lookup tables
 				self.idLookup.update(IDLookupUpdate)
 				self.nameLookup.update(nameLookupUpdate)
+			elif (employeeID in self.idLookup):
+				# skip over duplicates for now, make a list of them as we go through.
+				print "Duplicate EmployeeID: {0} not added to tree as Employee ID is a duplicate".format(newEntry.generateOutputString())
 			else:
 				# if there has not been a duplication then just add node to the tree
 				nameLookupUpdate = {name:[treeNode(entryArgs)]}
