@@ -65,15 +65,15 @@ class Tree(object):
 			# there has been a problem loading the file, request that the user types a new file path
 			print "IO Error ({0}): {1}".format(e.errno, e.strerror )
 			self.filePath = raw_input("Please enter a new file to load: ")
-			loadTree();
+			loadTree()
 		except emptyDatabase as e:
 			# the database has not loaded any data therefore request a new file as it appears that this one is blank
 			print e.strerror
 			self.filePath = raw_input("Please enter a new file to load: ")
-			self.loadTree();
+			self.loadTree()
 		finally:
 			# always close the file
-			dataFile.close();
+			dataFile.close()
 
 	def removeWhitespace(self, inputData):
 		"""Removes any excess whitespace from the input, removes trailing and leading whitespace and also removes multiple spacing between words """
@@ -83,7 +83,7 @@ class Tree(object):
 				inputData[index] = self.removeWhitespace(inputData[index])
 		else:
 			# remove trailing and leading whitespace fire
-			inputData = inputData.upper().strip(' ');
+			inputData = inputData.upper().strip(' ')
 			# then remove any double (or more) spaces
 			inputData = re.sub("\s\s+"," ", inputData)
 		return inputData
@@ -130,7 +130,7 @@ class Tree(object):
 				print "Unfortunately there are multiple entries under " + employee + ". Please type the ID of the employee desired."
 				for name in self.nameLookup[employee]:
 					# print out a list of the employee details to allow the user to check the employee they desire
-					tempIDList += [name.getEmployeeID()];
+					tempIDList += [name.getEmployeeID()]
 					print "Employee ID: "+name.getEmployeeID()+" | Employee Name: " + name.getName() + " | ManagerID: " + name.getManagerID()
 				# allow the user to input their choice 
 				chosenID = raw_input("ID of desired Employee: ")
@@ -141,7 +141,7 @@ class Tree(object):
 		else:
 			# returns false if the employee is not in the tree. This can then be dealt with
 			print "Unfortunately " +employee+" is not in the database"
-			return False;
+			return False
 
 	def createOutput(self, firstEmployee, secondEmployee):
 		""" generate the output string """
@@ -247,7 +247,7 @@ class Tree(object):
 		while (employee.getManagerID() in self.idLookup):
 			# while manager ID is still an employee then create the return list
 			returnList = returnList + [employee.getEmployeeID()]
-			employee = self.idLookup[employee.getManagerID()];
+			employee = self.idLookup[employee.getManagerID()]
 			if isinstance(employee, list):
 				employee = employee[0]
 		# add the highest manager to the return list

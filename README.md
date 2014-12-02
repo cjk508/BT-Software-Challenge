@@ -3,11 +3,11 @@ BT-Software-Challenge
 
 Software Challenge for BT Assessment Centre
 
-This program is written in Python using the sys and regex libraries provided as standard with Python 2.7.
+This program is written in Python using the sys and regex libraries provided as standard with Python.
 
 There are 2 files, the program "employmentTree.py" and a test file "testDoc.txt" which is a slightly modified version of the original data
 
-It is executed using the standard method. For Unix it is the following: 
+It is executed using the standard method, for Unix it is the following: 
 
 ```
 python "employmentTree.py" *input text file* *First Employee Name* *Second Employee Name*
