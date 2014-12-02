@@ -6,7 +6,7 @@ class emptyDatabase(Exception):
 		self.strerror = "The file you have selected appears to be empty"
 	def __str__(self):
 		return self.strerror
-		
+
 class treeNode(object):
 	"""one entry in the tree contains all 3 pieces of information and returns an output string"""
 	def __init__(self, arg):
@@ -183,11 +183,11 @@ class Tree(object):
 			rootIndex = secondPath.index(employeeID)
 			if rootIndex > 0 :
 				secondPath = secondPath[:]
-
+				rightString = ""
 				for employeeID in reversed(secondPath):
 					# generate the second path string
 					employee = self.idLookup[employeeID][0]
-					rightString = " <- " + employee.generateOutputString()
+					rightString =rightString + " <- " + employee.generateOutputString()
 				# concatenate the right and left string with the manager in the middle
 				return outputString + manager.generateOutputString() + rightString
 			else:
