@@ -17,6 +17,6 @@ The text in astericks is required, however you will be prompted for them if you 
 
 I have assumed that removed entries are entirely blank rows, if rows do have splits then false keys in the lookups are removed and badly formatted lines are skipped
 
-If an employee ID appears more than once then the previous entry is skipped. This is something that should be a concern.
+If an employee ID appears more than once then the duplicate entry is skipped. This is something that should be a concern.
 
 This algorithm does not deal with loops in management which hopefully should never happen
