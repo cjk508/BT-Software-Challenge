@@ -37,6 +37,11 @@ class Tree(object):
 		self.nameLookup = {}
 		self.idLookup = {}
 		self.loadTree()
+		# removes empty rows that have been created by removed employees
+		if '' in self.idLookup:
+			del self.idLookup['']
+		if '' in  self.nameLookup:
+			del self.nameLookup['']
 	
 	def loadTree(self):
 		""" Loads the tree from the filepath specified. If this file is blank or no file is found the user will be asked for another file path"""
@@ -46,10 +51,13 @@ class Tree(object):
 			for line in lines:
 				# filters out any lines that are just whitespace
 				if not (re.match("^\s*$", line)):
-					splitLine = line.split("|",4)
-					splitLine = self.removeWhitespace(splitLine[1:4])
-					# splits the data into the 3 different fields and removes the whitespace
-					self.addEntry(splitLine[0], splitLine[1], splitLine[2])
+					try:
+						splitLine = line.split("|",4)
+						splitLine = self.removeWhitespace(splitLine[1:4])
+						# splits the data into the 3 different fields and removes the whitespace
+						self.addEntry(splitLine[0], splitLine[1], splitLine[2])
+					except IndexError as e :
+						print "Index Error: attempted to extract data but line was not correctly formatted, this line has been skipped"
 			# if no information has been saved in the lookup then the file is empty (fires even if full of whitespace)
 			if (self.nameLookup == {}):
 				raise emptyDatabase
