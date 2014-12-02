@@ -103,9 +103,9 @@ class Tree(object):
 				# if the entry already exists then add the node to a list so this can be consulted if the input
 				# requests this later
 				tempEmployee = self.nameLookup[name]
-				tempEmployee += [newEntry]
-				nameLookupUpdate = {name:[tempEmployee]}
-				IDLookupUpdate = {employeeID:[treeNode(entryArgs)]}
+				tempEmployee.append(newEntry)
+				nameLookupUpdate = {name:tempEmployee}
+				IDLookupUpdate = {employeeID:treeNode(entryArgs)}
 
 				# update the lookup tables
 				self.idLookup.update(IDLookupUpdate)
@@ -121,14 +121,14 @@ class Tree(object):
 		""" Checks that the input is in the tree and allows the user to select one if there are multiples, or correct if not in the tree """
 		if (employee in self.nameLookup):
 			# If the name is in the tree then check this entry for multiples
-			entry = self.nameLookup[employee][0]
-			if isinstance(entry, treeNode):
+			entry = self.nameLookup[employee]
+			if len(entry) == 1:
 				# if there is just one, then return it
 				return self.nameLookup[employee]
 			else:
 				tempIDList = []
 				print "Unfortunately there are multiple entries under " + employee + ". Please type the ID of the employee desired."
-				for name in self.nameLookup[employee][0]:
+				for name in self.nameLookup[employee]:
 					# print out a list of the employee details to allow the user to check the employee they desire
 					tempIDList += [name.getEmployeeID()];
 					print "Employee ID: "+name.getEmployeeID()+" | Employee Name: " + name.getName() + " | ManagerID: " + name.getManagerID()
@@ -143,64 +143,90 @@ class Tree(object):
 			print "Unfortunately " +employee+" is not in the database"
 			return False;
 
-	def generateString(self, firstEmployee, secondEmployee):
+	def createOutput(self, firstEmployee, secondEmployee):
 		""" generate the output string """
 
 		# make sure that the input employees are valid inputs
 		firstEntry = self.validateEmployee(firstEmployee)
 		secondEntry = self.validateEmployee(secondEmployee)
 
-		if (firstEntry == False and secondEntry == False):
-			# if both entries are not in the tree ask for both to be re-entered
+		while (firstEntry == False):
 			firstEmployee = raw_input("Please enter a valid employee name to replace "+ firstEmployee +": ")
+			firstEntry = self.validateEmployee(firstEmployee)
+			if isinstance(firstEntry, list):
+				firstEntry = firstEntry[0]
+		while (secondEntry == False):
 			secondEmployee = raw_input("Please enter a valid employee name to replace "+ secondEmployee+": ")
-			return self.generateString(firstEmployee, secondEmployee)
-		elif (secondEntry == False):
-			# if only the second is incorrect then ask for it to be re-entered
-			secondEmployee = raw_input("Please enter a valid employee name to replace "+ secondEmployee+": ")
-			return self.generateString(firstEmployee, secondEmployee)
-		elif (firstEntry == False):
-			# if only the first is incorrect then ask for it to be re-entered
-			firstEmployee = raw_input("Please enter a valid employee name to replace "+ firstEmployee +": ")
-			return self.generateString(firstEmployee, secondEmployee)
-		else:
-			# initialise the output string
-			outputString = ""
-			# generate the path to the second node
-			secondPath = self.findPath(secondEntry)
-			
-			# create temporary variables that will change as the string is generated
-			employee = firstEntry[0]
-			employeeID = employee.getEmployeeID()
+			secondEntry = self.validateEmployee(secondEmployee)
+			if isinstance(secondEntry, list):
+				secondEntry = secondEntry[0]
+
+		return self.generateString(firstEntry, secondEntry)
+	
+
+	def generateString(self,firstEntry, secondEntry):
+		# initialise the output string
+		outputString = ""
+		# generate the path to the second node
+		if isinstance(secondEntry, list):
+			secondEntry = secondEntry[0]
+		secondPath = self.findPath(secondEntry)
+		
+		# create temporary variables that will change as the string is generated
+		if isinstance(firstEntry, list):
+			firstEntry = firstEntry[0]
+		employee = firstEntry
+		employeeID = employee.getEmployeeID()
+		rootDetected = self.commonRootDetection(secondPath, employeeID)
+
+
+		# if the common root has been detected then stop generating the string 
+		while (not rootDetected) and (employeeID != ''):
+			outputString = outputString+ employee.generateOutputString() + " -> "
+
+			# get the manager
+			employeeID = employee.getManagerID()
 			rootDetected = self.commonRootDetection(secondPath, employeeID)
-
-			# if the common root has been detected then stop generating the string 
-			while not (rootDetected):
-				outputString = outputString+ employee.generateOutputString() + " -> "
-
-				# get the manager
-				employeeID = employee.getManagerID()
-				rootDetected = self.commonRootDetection(secondPath, employeeID)
-				if not rootDetected:
-					# as long as the root has not been detected bubble up the tree
-					employee = self.idLookup[employeeID][0]
-			
-			# take note of the manager
+			if (not rootDetected) and (employeeID != ''):
+				# as long as the root has not been detected bubble up the tree
+				try:
+					employee = self.idLookup[employeeID]
+					if isinstance(employee, list):
+						employee = employee[0]
+				except KeyError:
+					print "KeyError: could not find the employee entry: \'"+employee.generateOutputString() +"\'"
+					return "Output String terminated due to KeyError"
+		# take note of the manager
+		if (employeeID != ''):
 			manager = self.idLookup[employeeID][0]
 			# remove employee IDs in the second Path that are after the common root
 			rootIndex = secondPath.index(employeeID)
-			if rootIndex > 0 :
-				secondPath = secondPath[:rootIndex]
-				rightString = ""
-				for employeeID in reversed(secondPath):
-					# generate the second path string
-					employee = self.idLookup[employeeID][0]
-					rightString =rightString + " <- " + employee.generateOutputString()
-				# concatenate the right and left string with the manager in the middle
-				return outputString + manager.generateOutputString() + rightString
-			else:
-				# the root is the furthest right needed
-				return outputString + manager.generateOutputString()
+		else:
+			manager = employee
+			# remove employee IDs in the second Path that are after the common root
+			try:
+				rootIndex = secondPath.index(manager.getEmployeeID())
+			except ValueError:
+				print "ValueError: Employee ID is not in the list. Error occurred generating the path from {0}. Employee IDs in this path are {1}.".format(manager.generateOutputString(), secondPath)
+				return "Output String terminated due to ValueError"
+		if rootIndex > 0 :
+			secondPath = secondPath[:rootIndex]
+			rightString = ""
+			for employeeID in reversed(secondPath):
+				# generate the second path string
+				try:
+					employee = self.idLookup[employeeID]
+					if isinstance(employee, list):
+						employee = employee[0]
+					rightString =rightString + " <- " + employee.generateOutputString()	
+				except KeyError:
+					print "KeyError: could not find an employee with ID: \'"+employeeID +"\'"
+					return "Output String terminated due to KeyError"
+			# concatenate the right and left string with the manager in the middle
+			return outputString + manager.generateOutputString() + rightString
+		else:
+			# the root is the furthest right needed
+			return outputString + manager.generateOutputString()
 
 
 
@@ -218,12 +244,14 @@ class Tree(object):
 	def findPath(self, employee):
 		""" Creates the path for the left hand side of the output string by bubbling up through the tree till the root node is found """
 		returnList = []
-		while (employee[0].getManagerID() in self.idLookup):
+		while (employee.getManagerID() in self.idLookup):
 			# while manager ID is still an employee then create the return list
-			returnList = returnList + [employee[0].getEmployeeID()]
-			employee = self.idLookup[employee[0].getManagerID()];
+			returnList = returnList + [employee.getEmployeeID()]
+			employee = self.idLookup[employee.getManagerID()];
+			if isinstance(employee, list):
+				employee = employee[0]
 		# add the highest manager to the return list
-		returnList = returnList + [employee[0].getEmployeeID()]
+		returnList = returnList + [employee.getEmployeeID()]
 		return returnList
 
 	def commonRootDetection(self, secondPath, employeeID):
@@ -272,7 +300,7 @@ elif (len(sys.argv) == 4):
 employeeTree = Tree(inputArgs)
 
 # print out the output string generated by the tree
-outputString =  employeeTree.generateString(firstEntry, secondEntry)
+outputString =  employeeTree.createOutput(firstEntry, secondEntry)
 print "\n\r Output String \n\r"
 print outputString
 
