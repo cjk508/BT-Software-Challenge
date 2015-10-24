@@ -1,4 +1,4 @@
-Shortest Path Graph search
+Shortest Path Graph Search
 ==========================
 
 Software Challenge for an Assessment Centre
