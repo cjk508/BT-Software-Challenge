@@ -1,7 +1,7 @@
-BT-Software-Challenge
-=====================
+Shortest Path Graph search
+==========================
 
-Software Challenge for BT Assessment Centre
+Software Challenge for an Assessment Centre
 
 This program is written in Python using the sys and regex libraries provided as standard with Python.
 
