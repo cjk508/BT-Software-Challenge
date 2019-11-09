@@ -1,5 +1,6 @@
-Shortest Path Graph Search [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=cjk508_Shortest-Path-Graph-Search)](https://sonarcloud.io/dashboard?id=cjk508_Shortest-Path-Graph-Search) 
+Shortest Path Graph Search [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cjk508_Shortest-Path-Graph-Search&metric=alert_status)](https://sonarcloud.io/dashboard?id=cjk508_Shortest-Path-Graph-Search)
 ==========================
+
 Software Challenge for an Assessment Centre
 
 This program is written in Python using the sys and regex libraries provided as standard with Python.
